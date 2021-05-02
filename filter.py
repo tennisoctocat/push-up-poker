@@ -32,9 +32,9 @@ class Filter():
 		#self.currFrame = np.zeros((480, 640, 3)) # initialize to something random TODO: maybe change.
 		#cascPath = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 		self.faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-		#self.btwnEyebrows = TensorPoint([0, 0])
-		#self.nose  = TensorPoint([0, 0])
-		#self.cardHeight = 10
+		self.btwnEyebrows = TensorPoint([0, 0])
+		self.nose  = TensorPoint([0, 0])
+		self.cardHeight = 10
 		self.toMult = np.zeros((480, 640, 3))
 		self.toAdd = np.zeros((480, 640, 3))
 
@@ -56,15 +56,15 @@ class Filter():
 			tensorPoints = self.getTensorPoints(img)#, self.learn)
 
 			# calculate position of filter
-			btwnEyebrows = (tensorPoints[0] + tensorPoints[1])/2
+			self.btwnEyebrows = (tensorPoints[0] + tensorPoints[1])/2
 			# xBtwnEyebrows = int(btwnEyebrows[0]) # (x, y) is point of bottom middle of playing card
 			# yBtwnEyebrows = int(btwnEyebrows[1])
 
-			nose = tensorPoints[2]
+			self.nose = tensorPoints[2]
 
 			# Calculate card width and height
 			# Card height is about twice distance between btwnEyebrows and nose
-			cardHeight = int(2*np.sqrt(sum(np.square(btwnEyebrows - nose))))
+			self.cardHeight = int(2*np.sqrt(sum(np.square(self.btwnEyebrows - self.nose))))
 			# if (cardHeight > yBtwnEyebrows): # TODO: make sure this didnt break anything, also update in colab code.
 			# 	cardHeight = yBtwnEyebrows # Don't let the starting position be negative.
 			#cardWidth = CARD_WIDTH_TO_HEIGHT_RATIO * cardHeight
@@ -72,7 +72,7 @@ class Filter():
 			# 	cardWidth = xBtwnEyebrows*2 # Don't let the starting position be negative.
 
 			# Overlay the filter
-			self.getFilterFrame(img, cardHeight, btwnEyebrows, nose)
+		self.getFilterFrame(img, self.cardHeight, self.btwnEyebrows, self.nose)
 			# ctxImg = TensorImage(self.currFrame).show() # show the scaled points on the original image.
 			# tensorPoints.show(ctx=ctxImg);
 		# # create final image
@@ -83,7 +83,7 @@ class Filter():
 		#NOTE: imgName parameter is just so that we can say if there was no face found for a particular image.
 		# Get only the face, and account for the case where no face is found.
 
-		faces = self.faceCascade.detectMultiScale(img, minNeighbors=1, minSize=(int(img.shape[0]/10), int(img.shape[0]/10)))
+		faces = self.faceCascade.detectMultiScale(img, minNeighbors=3, minSize=(int(img.shape[0]/10), int(img.shape[0]/10)))
 		if len(faces) > 1:
 			print("faces greater than 1 ")# + imgName)
 		if len(faces) != 0:
