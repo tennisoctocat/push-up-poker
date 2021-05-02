@@ -55,12 +55,12 @@ class VideoTransformTrack(MediaStreamTrack):
         self.transform = transform
         self.timeStep = 0 # added
         # positions of card filter
-        self.x_1 = 0; self.x_2 = 0; self.x_3 = 0; self.x_4 = 0
-        self.y_1 = 0; self.y_2 = 0; self.y_3 = 0; self.y_4 = 0
+        #self.x_1 = 0; self.x_2 = 0; self.x_3 = 0; self.x_4 = 0
+        #self.y_1 = 0; self.y_2 = 0; self.y_3 = 0; self.y_4 = 0
 
     async def recv(self):
         frame = await self.track.recv()
-        print("timestep is", self.timeStep)
+        #print("timestep is", self.timeStep)
         # if self.timeStep % 10 != 0:
         #     return frame
         #print("doing detection")
@@ -118,16 +118,17 @@ class VideoTransformTrack(MediaStreamTrack):
             return new_frame
         elif self.transform == "pup": # added
 
-            img = frame.to_ndarray(format="bgr24")
+            img = frame.to_ndarray(format="rgb24")
 
             # Only recalculate filter position every 20 time steps.
-            if self.timeStep % 20 == 0:
-        #     return frame
-                self.x_1, self.x_2, self.x_3, self.x_4, self.y_1, self.y_2, self.y_3, self.y_4 = filter.applyFilter(img)#, learn) # starting from upper left, and going counter clockwise: 1, 2, 3, 4
+        #     if self.timeStep % 20 == 0:
+        # #     return frame
+        #         self.x_1, self.x_2, self.x_3, self.x_4, self.y_1, self.y_2, self.y_3, self.y_4 = filter.applyFilter(img)#, learn) # starting from upper left, and going counter clockwise: 1, 2, 3, 4
             
-            img[self.y_1:self.y_3, self.x_1:self.x_3, :] = 0
+        #     img[self.y_1:self.y_3, self.x_1:self.x_3, :] = 0
+            img = filter.applyFilter(img, self.timeStep)
             # rebuild a VideoFrame, preserving timing information
-            new_frame = VideoFrame.from_ndarray(img, format="bgr24")
+            new_frame = VideoFrame.from_ndarray(img, format="rgb24")
             new_frame.pts = frame.pts
             new_frame.time_base = frame.time_base
             self.timeStep += 1

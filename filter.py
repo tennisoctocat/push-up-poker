@@ -11,7 +11,7 @@ import cv2
 import imutils
 # Include so that learner knows what get_y is.
 
-CARD_WIDTH_TO_HEIGHT_RATIO = 2.5/3.5
+#CARD_WIDTH_TO_HEIGHT_RATIO = 2.5/3.5
 
 def get_y(r):
 	return [
@@ -29,9 +29,15 @@ class Filter():
 		#path = cardImgs/"AS.png"
 		self.spadeAce = PILImage.create(self.cardImgs/"AS.png") # TODO: later change to do all cards.
 		self.filterImage = self.spadeAce # set filter image to be spadeAce for now.
-		self.currFrame = np.zeros((480, 640, 3)) # initialize to something random TODO: maybe change.
+		#self.currFrame = np.zeros((480, 640, 3)) # initialize to something random TODO: maybe change.
 		#cascPath = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 		self.faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+		#self.btwnEyebrows = TensorPoint([0, 0])
+		#self.nose  = TensorPoint([0, 0])
+		#self.cardHeight = 10
+		self.toMult = np.zeros((480, 640, 3))
+		self.toAdd = np.zeros((480, 640, 3))
+
 
 
 
@@ -51,8 +57,8 @@ class Filter():
 
 			# calculate position of filter
 			btwnEyebrows = (tensorPoints[0] + tensorPoints[1])/2
-			xBtwnEyebrows = int(btwnEyebrows[0]) # (x, y) is point of bottom middle of playing card
-			yBtwnEyebrows = int(btwnEyebrows[1])
+			# xBtwnEyebrows = int(btwnEyebrows[0]) # (x, y) is point of bottom middle of playing card
+			# yBtwnEyebrows = int(btwnEyebrows[1])
 
 			nose = tensorPoints[2]
 
@@ -61,15 +67,17 @@ class Filter():
 			cardHeight = int(2*np.sqrt(sum(np.square(btwnEyebrows - nose))))
 			# if (cardHeight > yBtwnEyebrows): # TODO: make sure this didnt break anything, also update in colab code.
 			# 	cardHeight = yBtwnEyebrows # Don't let the starting position be negative.
-			cardWidth = CARD_WIDTH_TO_HEIGHT_RATIO * cardHeight
+			#cardWidth = CARD_WIDTH_TO_HEIGHT_RATIO * cardHeight
 			# if (cardWidth/2 > xBtwnEyebrows):
 			# 	cardWidth = xBtwnEyebrows*2 # Don't let the starting position be negative.
 
 			# Overlay the filter
-			self.currFrame = self.getFilterFrame(img, cardHeight, btwnEyebrows, nose)
+			self.getFilterFrame(img, cardHeight, btwnEyebrows, nose)
 			# ctxImg = TensorImage(self.currFrame).show() # show the scaled points on the original image.
 			# tensorPoints.show(ctx=ctxImg);
-		return self.currFrame#oldImg#self.currFrame
+		# # create final image
+		finalImg = (np.array(img) * self.toMult + self.toAdd).astype('uint8')
+		return finalImg#self.currFrame#oldImg#self.currFrame
 
 	def getTensorPoints(self, img):#, learn):
 		#NOTE: imgName parameter is just so that we can say if there was no face found for a particular image.
@@ -147,19 +155,16 @@ class Filter():
 			endX = img.shape[1]
 
 		# create image to multiply by to black out filter area
-		toMult = np.ones(np.array(img).shape)
-		toMult[startY:endY, startX:endX,:] = inverseBinary[startYC:endYC, startXC:endXC, :]
+		self.toMult = np.ones(np.array(img).shape)
+		self.toMult[startY:endY, startX:endX,:] = inverseBinary[startYC:endYC, startXC:endXC, :]
 
 		# create image to add to put in filter
-		toAdd = np.zeros(np.array(img).shape)
-		toAdd[startY:endY, startX:endX,:] = rotatedResizedFilter[startYC:endYC, startXC:endXC, :]
+		self.toAdd = np.zeros(np.array(img).shape)
+		self.toAdd[startY:endY, startX:endX,:] = rotatedResizedFilter[startYC:endYC, startXC:endXC, :]
 
-		# create final image
-		finalImg = (np.array(img) * toMult + toAdd).astype(int)
-		#show_image(finalImg)
-		#print("type of finalImg is", type(finalImg))
-		#print(finalImg)
-		return finalImg.astype('uint8') # Must be type uint8 for things to work.
+		# # create final image
+		# finalImg = (np.array(img) * self.toMult + self.toAdd).astype('uint8')
+		# return finalImg # Must be type uint8 for things to work.
 
 
 		#img
