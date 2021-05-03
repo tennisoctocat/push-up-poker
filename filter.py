@@ -32,11 +32,15 @@ class Filter():
 		#self.currFrame = np.zeros((480, 640, 3)) # initialize to something random TODO: maybe change.
 		#cascPath = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 		self.faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-		self.btwnEyebrows = TensorPoint([0, 0])
-		self.nose  = TensorPoint([0, 0])
-		self.cardHeight = 10
-		self.toMult = np.zeros((480, 640, 3))
-		self.toAdd = np.zeros((480, 640, 3))
+		#self.btwnEyebrows = TensorPoint([0, 0])
+		# nose  = TensorPoint([0, 0])
+		# self.cardHeight = 10
+		# self.toMult = np.zeros((480, 640, 3))
+		# self.toAdd = np.zeros((480, 640, 3))
+		self.rotatedResizedFilter = np.zeros((480, 640, 3))
+		self.inverseBinary = np.zeros((480, 640, 3))
+		self.startX, self.startY, self.endX, self.endY = (0, 0, 0, 0)
+		self.startXC, self.startYC, self.endXC, self.endYC = (0, 0, 0, 0)
 
 
 
@@ -56,15 +60,15 @@ class Filter():
 			tensorPoints = self.getTensorPoints(img)#, self.learn)
 
 			# calculate position of filter
-			self.btwnEyebrows = (tensorPoints[0] + tensorPoints[1])/2
+			btwnEyebrows = (tensorPoints[0] + tensorPoints[1])/2
 			# xBtwnEyebrows = int(btwnEyebrows[0]) # (x, y) is point of bottom middle of playing card
 			# yBtwnEyebrows = int(btwnEyebrows[1])
 
-			self.nose = tensorPoints[2]
+			nose = tensorPoints[2]
 
 			# Calculate card width and height
 			# Card height is about twice distance between btwnEyebrows and nose
-			self.cardHeight = int(2*np.sqrt(sum(np.square(self.btwnEyebrows - self.nose))))
+			cardHeight = int(2*np.sqrt(sum(np.square(btwnEyebrows - nose))))
 			# if (cardHeight > yBtwnEyebrows): # TODO: make sure this didnt break anything, also update in colab code.
 			# 	cardHeight = yBtwnEyebrows # Don't let the starting position be negative.
 			#cardWidth = CARD_WIDTH_TO_HEIGHT_RATIO * cardHeight
@@ -72,18 +76,19 @@ class Filter():
 			# 	cardWidth = xBtwnEyebrows*2 # Don't let the starting position be negative.
 
 			# Overlay the filter
-		self.getFilterFrame(img, self.cardHeight, self.btwnEyebrows, self.nose)
+			self.getFilterFrame(cardHeight, btwnEyebrows, nose)
 			# ctxImg = TensorImage(self.currFrame).show() # show the scaled points on the original image.
 			# tensorPoints.show(ctx=ctxImg);
 		# # create final image
-		finalImg = (np.array(img) * self.toMult + self.toAdd).astype('uint8')
+		finalImg = self.applyFilterFrame(img)
+		#finalImg = (np.array(img) * self.toMult + self.toAdd).astype('uint8')
 		return finalImg#self.currFrame#oldImg#self.currFrame
 
 	def getTensorPoints(self, img):#, learn):
 		#NOTE: imgName parameter is just so that we can say if there was no face found for a particular image.
 		# Get only the face, and account for the case where no face is found.
 
-		faces = self.faceCascade.detectMultiScale(img, minNeighbors=3, minSize=(int(img.shape[0]/10), int(img.shape[0]/10)))
+		faces = []#self.faceCascade.detectMultiScale(img, minNeighbors=3, minSize=(int(img.shape[0]/10), int(img.shape[0]/10)))
 		if len(faces) > 1:
 			print("faces greater than 1 ")# + imgName)
 		if len(faces) != 0:
@@ -105,7 +110,7 @@ class Filter():
 		# Multiply by ratios and add x, y since tensor points are based on cropped face only image.
 		return ratios * tensorPointsGrayscale + tensor(x, y)
 
-	def getFilterFrame(self, img, filterHeight, btwnEyebrows, nose):
+	def getFilterFrame(self, filterHeight, btwnEyebrows, nose):
 		"""
 		img: PILImage, image to put the filter over
 		filterHeight: double, the height of the filter
@@ -122,49 +127,50 @@ class Filter():
 		resizeRatio = filterHeight/self.filterImage.shape[0]
 		filterWidth = int(self.filterImage.shape[1]*resizeRatio)
 		resizedFilter = self.filterImage.resize((filterWidth, filterHeight)) # width then height
-		rotatedResizedFilter = imutils.rotate_bound(np.array(resizedFilter), angle=angle)#imutils.rotate_bound(np.array(self.filterImage), angle=45)
+		self.rotatedResizedFilter = imutils.rotate_bound(np.array(resizedFilter), angle=angle)#imutils.rotate_bound(np.array(self.filterImage), angle=45)
 
 		# use to black out parts of original image
 		binaryCard = np.zeros(np.array(resizedFilter).shape) + 1
 		rotatedBinary = imutils.rotate_bound(binaryCard, angle=angle)#imutils.rotate_bound(np.array(self.filterImage), angle=45)
-		inverseBinary = (rotatedBinary < 1).astype(int)
+		self.inverseBinary = (rotatedBinary < 1).astype(int)
 
 		# Calculate positions
 		# starting x and y for upper left corner of filter
-		endX = int(xBtwnEyebrows + filterWidth/2 * np.cos(-angle*np.pi/180))
-		endY = int(yBtwnEyebrows + filterWidth/2 * np.sin(-angle*np.pi/180)) # use trig
-		startY = endY - inverseBinary.shape[0]
-		startX = endX - inverseBinary.shape[1]
+		self.endX = int(xBtwnEyebrows + filterWidth/2 * np.cos(-angle*np.pi/180))
+		self.endY = int(yBtwnEyebrows + filterWidth/2 * np.sin(-angle*np.pi/180)) # use trig
+		self.startY = self.endY - self.inverseBinary.shape[0]
+		self.startX = self.endX - self.inverseBinary.shape[1]
 
 		# indicies for the card itself.
-		startYC = 0; endYC = inverseBinary.shape[0]; startXC = 0; endXC = inverseBinary.shape[1]
+		self.startYC = 0; self.endYC = self.inverseBinary.shape[0]; self.startXC = 0; self.endXC = self.inverseBinary.shape[1]
 
+	def applyFilterFrame(self, img):
 		# Adjust for edge cases
-		if (startY < 0): # top
-			startYC = abs(startY)
-			startY = 0
-		if (startX < 0): # left
-			startXC = abs(startX)
-			startX = 0
-		if (endY > img.shape[0]): # bottom
-			endYC = endY - img.shape[0]
-			endY = img.shape[0]
+		if (self.startY < 0): # top
+			self.startYC = abs(self.startY)
+			self.startY = 0
+		if (self.startX < 0): # left
+			self.startXC = abs(self.startX)
+			self.startX = 0
+		if (self.endY > img.shape[0]): # bottom
+			self.endYC = self.endY - img.shape[0]
+			self.endY = img.shape[0]
 			#print("updating end y")
-		if (endX > img.shape[1]): # right
-			endXC = endX - img.shape[1]
-			endX = img.shape[1]
+		if (self.endX > img.shape[1]): # right
+			self.endXC = self.endX - img.shape[1]
+			self.endX = img.shape[1]
 
 		# create image to multiply by to black out filter area
-		self.toMult = np.ones(np.array(img).shape)
-		self.toMult[startY:endY, startX:endX,:] = inverseBinary[startYC:endYC, startXC:endXC, :]
+		toMult = np.ones(np.array(img).shape)
+		toMult[self.startY:self.endY, self.startX:self.endX,:] = self.inverseBinary[self.startYC:self.endYC, self.startXC:self.endXC, :]
 
 		# create image to add to put in filter
-		self.toAdd = np.zeros(np.array(img).shape)
-		self.toAdd[startY:endY, startX:endX,:] = rotatedResizedFilter[startYC:endYC, startXC:endXC, :]
-
+		toAdd = np.zeros(np.array(img).shape)
+		toAdd[self.startY:self.endY, self.startX:self.endX,:] = self.rotatedResizedFilter[self.startYC:self.endYC, self.startXC:self.endXC, :]
+		finalImg = (np.array(img) * toMult + toAdd).astype('uint8')
 		# # create final image
 		# finalImg = (np.array(img) * self.toMult + self.toAdd).astype('uint8')
-		# return finalImg # Must be type uint8 for things to work.
+		return finalImg # Must be type uint8 for things to work.
 
 
 		#img
