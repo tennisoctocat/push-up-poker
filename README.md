@@ -30,7 +30,7 @@ Click Start, and you'll see the filter!
 
 ## Details
 
-The "training" folder contains "FacialFeatures.ipynb", which is the notebook file used for training the neural network used for finding facial features. To train the neural network, I used the [Facial Keypoints Detection](https://www.kaggle.com/c/facial-keypoints-detection/data) dataset from Kaggle. 
+The "training" folder contains "FacialFeatures.ipynb", which is the notebook file used for training the neural network to find facial features. To train the neural network, I used the [Facial Keypoints Detection](https://www.kaggle.com/c/facial-keypoints-detection/data) dataset from Kaggle. 
 The "training" folder also contains "sorting.py" and "valid.py", which I wrote for data cleaning. "isValid.csv" is the result of running the aforementioned two scripts on the Kaggle dataset, and contains a 1 for every row in csv that was part of my validation dataset, and a 0 elsewhere.
 
 filter.py contains code that uses the neural network to apply the card filter to the incoming video feed.
