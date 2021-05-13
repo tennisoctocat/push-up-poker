@@ -47,4 +47,4 @@ The audio file "demo-instruct.wav" was in the original aiortc example. The creat
 project. It is licensed as Creative Commons Attribution-Share Alike 3.0:
 https://wiki.asterisk.org/wiki/display/AST/Voice+Prompts+and+Music+on+Hold+License
 
-Special thanks to Professor Rhodes of Harvey Mudd College for helping me resolve elusive bugs, and to Professor Dodds of Harvey Mudd College for giving me advice on implementing the server.
+Special thanks to Professor Rhodes and Professor Dodds of Harvey Mudd College for giving me advice and helping me resolve elusive bugs.
