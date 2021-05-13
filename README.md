@@ -22,9 +22,9 @@ Run the code.
 ```
 $ python server.py
 ```
-Navigate to the following link using your favorite browser.
+Navigate to the following link using your favorite browser. You may need to explicitly tell your browser that this is a safe url if it complains.
 
-[http://127.0.0.1:8080]([http://127.0.0.1:8080])
+[http://127.0.0.1:8080](http://127.0.0.1:8080)
 
 Click Start, and you'll see the filter!
 
