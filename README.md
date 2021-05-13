@@ -9,7 +9,7 @@ Create a python virtual environment.
 ```
 $ python3 -m venv env_name
 ```
-Run your python virtual environment.
+Activate your python virtual environment.
 ```
 $ source env_name/bin/activate
 ```
