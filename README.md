@@ -23,9 +23,9 @@ Run the code.
 $ python server.py
 ```
 Navigate to the following link using your favorite browser.
-```
+
 [http://127.0.0.1:8080]([http://127.0.0.1:8080])
-```
+
 Click Start, and you'll see the filter!
 
 
