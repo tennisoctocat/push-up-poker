@@ -1,11 +1,11 @@
-Audio, video and data channel server
-====================================
+### Push-Up Poker
 
-This example illustrates establishing audio, video and a data channel with a
-browser. It also performs some image processing on the video frames using
-OpenCV.
+The idea of this project is to create a filter of a playing card on people's foreheads. The filter will tilt when the person's head is tilted, and be centered on their forehead, with the bottom of the card located at the top of their eyebrows. Eventually, I'd like to include this filter in a video-calling app that allows myself and my friends to virtually play a game called "push-up poker", where we put cards on our foreheads and bet pushups on who has the highest card.
 
-Running
+The code was adapted from the [aiortc server example](https://github.com/aiortc/aiortc/tree/main/examples/server).
+
+
+
 -------
 
 First install the required packages:
