@@ -1,6 +1,6 @@
 # Push-Up Poker
 
-The idea of this project is to create a filter of a playing card on people's foreheads. The filter will tilt when the person's head is tilted, and be centered on their forehead, with the bottom of the card located at the top of their eyebrows. Eventually, I'd like to include this filter in a video-calling app that allows myself and my friends to virtually play a game called "push-up poker", where we put cards on our foreheads and bet pushups on who has the highest card.
+This code applies a filter of a playing card on people's foreheads in real time to a live incoming video feed. The filter tilts when the person's head is tilted, and is centered on their forehead, with the bottom of the card located at the top of their eyebrows. Eventually, I'd like to include this filter in a video-calling app that allows myself and my friends to virtually play a game called "push-up poker", where we put cards on our foreheads and bet pushups on who has the highest card.
 
 The "training" folder contains "FacialFeatures.ipynb", which is the notebook file used for training the neural network used for finding facial features. To train the neural network, I used the [Facial Keypoints Detection](https://www.kaggle.com/c/facial-keypoints-detection/data) dataset from Kaggle. 
 It also contains "sorting.py" and "valid.py", which I wrote for data cleaning. "is_valid.py" is the result of running the aforementioned two scripts on the Kaggle dataset, and contains a 1 for every row in csv that was part of my validation dataset, and a 0 elsewhere.
