@@ -7,11 +7,11 @@ This code applies a filter of a playing card on people's foreheads in real time 
 
 Create a python virtual environment.
 ```
-$ python3 -m venv /path/to/env_name
+$ python3 -m venv env_name
 ```
 Run your python virtual environment.
 ```
-$ source /path/to/env_name/bin/activate
+$ source env_name/bin/activate
 ```
 Install the required packages.
 ```
