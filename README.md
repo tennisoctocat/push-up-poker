@@ -45,10 +45,9 @@ If you want to enable verbose logging, run:
 
     $ python server.py -v
 
-Credits
--------
+## Credits
 
-The audio file "demo-instruct.wav" was borrowed from the Asterisk
-project. It is licensed as Creative Commons Attribution-Share Alike 3.0:
+The code was adapted from the [aiortc server example](https://github.com/aiortc/aiortc/tree/main/examples/server).
 
-https://wiki.asterisk.org/wiki/display/AST/Voice+Prompts+and+Music+on+Hold+License
+The audio file "demo-instruct.wav" was in the original aiortc example. The creators of aiortc borrowed it from the Asterisk
+project. It is licensed as [Creative Commons Attribution-Share Alike 3.0](https://wiki.asterisk.org/wiki/display/AST/Voice+Prompts+and+Music+on+Hold+License)
