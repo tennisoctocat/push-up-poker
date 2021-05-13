@@ -33,9 +33,9 @@ Click Start, and you'll see the filter!
 The "training" folder contains "FacialFeatures.ipynb", which is the notebook file used for training the neural network to find facial features. To train the neural network, I used the [Facial Keypoints Detection](https://www.kaggle.com/c/facial-keypoints-detection/data) dataset from Kaggle. The Kaggle dataset has the same people repeated multiple times in the dataset, such that splitting instances randomly between training and valdiation would result in having the same people in both training and valdiation datasets. So, I picked out five specific people to use for my validation dataset. 
 To do this data cleaning, I wrote "sorting.py" and "valid.py", which are also in the "training" folder. "isValid.csv" is the result of running the aforementioned two scripts on the Kaggle dataset, and contains a 1 for every row in csv that was part of my validation dataset, and a 0 elsewhere.
 
-filter.py contains code that uses the neural network to apply the playing card filter to the incoming video feed.
+"filter.py" contains code that uses the neural network to apply the playing card filter to the incoming video feed.
 
-index.html, server.py, and client.js were all adapted from the [aiortc server example](https://github.com/aiortc/aiortc/tree/main/examples/server), and use the [aiortc library](https://aiortc.readthedocs.io/en/latest/api.html) to take in incoming video frames from the client, process them, and then return the processed video frames.
+"index.html", "server.py", and "client.js" were all adapted from the [aiortc server example](https://github.com/aiortc/aiortc/tree/main/examples/server), and use the [aiortc library](https://aiortc.readthedocs.io/en/latest/api.html) to take in incoming video frames from the client, process them, and then return the processed video frames.
 
 
 
