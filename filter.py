@@ -1,17 +1,14 @@
 """
 Contains the code for applying the filter.
 Author: Cynthia Hom
-TODO: update requriemnts .txt
-TODO: change to only keep filter location not frame itself
 """
 
 from fastai import *
 from fastai.vision.all import *
 import cv2
 import imutils
+
 # Include so that learner knows what get_y is.
-
-
 def get_y(r):
 	return [
     [r['left_eyebrow_outer_end_x'], r['left_eyebrow_outer_end_y']],
@@ -25,19 +22,15 @@ class Filter():
 		self.learn = load_learner('./models/kaggle1.pkl')
 		# path to cardImgs data
 		self.cardImgs = untar_data('http://web2.acbl.org/documentlibrary/marketing/Clip_Art/cards_png_zip.zip')
-		#path = cardImgs/"AS.png"
 		self.spadeAce = PILImage.create(self.cardImgs/"AS.png") # TODO: later change to do all cards.
 		self.filterImage = self.spadeAce # set filter image to be spadeAce for now.
 		self.faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 		
-		# these variables are used so that we don't have to recacluate the filter position every single frame
+		# These variables are used so that we don't have to recacluate the filter position every single frame
 		self.rotatedResizedFilter = np.zeros((480, 640, 3))
 		self.inverseBinary = np.zeros((480, 640, 3))
 		self.startX, self.startY, self.endX, self.endY = (0, 0, 0, 0)
 		self.startXC, self.startYC, self.endXC, self.endYC = (0, 0, 0, 0)
-
-
-
 
 	def applyFilter(self, img, timeStep):
 		"""
@@ -60,7 +53,7 @@ class Filter():
 			# Overlay the filter
 			self.getFilterFrame(cardHeight, btwnEyebrows, nose)
 
-		# return final image
+		# Return final image, after applying the filter
 		return self.applyFilterFrame(img)
 
 	def getTensorPoints(self, img):
@@ -95,29 +88,29 @@ class Filter():
 		"""
 		yBtwnEyebrows = int(btwnEyebrows[1])
 		xBtwnEyebrows = int(btwnEyebrows[0])
-		# change in x/change in y , nose first
+		# Change in x/change in y , nose first
 		difference = nose - btwnEyebrows
 		angle = float(-np.arctan(difference[0]/difference[1]) * 180.0/np.pi)
 
-		# calculations
+		# Calculations
 		resizeRatio = filterHeight/self.filterImage.shape[0]
 		filterWidth = int(self.filterImage.shape[1]*resizeRatio)
 		resizedFilter = self.filterImage.resize((filterWidth, filterHeight)) # width then height
 		self.rotatedResizedFilter = imutils.rotate_bound(np.array(resizedFilter), angle=angle)
 
-		# use to black out parts of original image
+		# Use to black out parts of original image
 		binaryCard = np.zeros(np.array(resizedFilter).shape) + 1
 		rotatedBinary = imutils.rotate_bound(binaryCard, angle=angle)
 		self.inverseBinary = (rotatedBinary < 1).astype(int)
 
 		# Calculate positions
-		# starting x and y for upper left corner of filter
+		# Starting x and y for upper left corner of filter
 		self.endX = int(xBtwnEyebrows + filterWidth/2 * np.cos(-angle*np.pi/180))
 		self.endY = int(yBtwnEyebrows + filterWidth/2 * np.sin(-angle*np.pi/180))
 		self.startY = self.endY - self.inverseBinary.shape[0]
 		self.startX = self.endX - self.inverseBinary.shape[1]
 
-		# indicies for the card itself.
+		# Indicies for the card itself.
 		self.startYC = 0; self.endYC = self.inverseBinary.shape[0]; self.startXC = 0; self.endXC = self.inverseBinary.shape[1]
 
 	def applyFilterFrame(self, img):
@@ -135,11 +128,11 @@ class Filter():
 			self.endXC = self.endX - img.shape[1]
 			self.endX = img.shape[1]
 
-		# create image to multiply by to black out filter area
+		# Create image to multiply by to black out filter area
 		toMult = np.ones(np.array(img).shape)
 		toMult[self.startY:self.endY, self.startX:self.endX,:] = self.inverseBinary[self.startYC:self.endYC, self.startXC:self.endXC, :]
 
-		# create image to add to put in filter
+		# Create image to add to put in filter
 		toAdd = np.zeros(np.array(img).shape)
 		toAdd[self.startY:self.endY, self.startX:self.endX,:] = self.rotatedResizedFilter[self.startYC:self.endYC, self.startXC:self.endXC, :]
 		return (np.array(img) * toMult + toAdd).astype('uint8') # Must be type uint8 for things to work.

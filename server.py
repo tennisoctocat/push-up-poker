@@ -1,10 +1,13 @@
 """
+server.py
 This file was adapted from the aiortc server.py example code.
 (https://github.com/aiortc/aiortc/tree/main/examples/server)
 
-NOTES:
-- got it to work as long as we forced chrome to accept the http address
-Found playing cards here:
+Note: To get this code to work, you'll have to 
+force your browser to accept the http address as a "safe"
+address.
+
+Playing card resource:
 http://acbl.mybigcommerce.com/52-playing-cards/
 """
 
