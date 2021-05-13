@@ -1,8 +1,9 @@
 """
+This file was adapted from the aiortc server.py example code.
+(https://github.com/aiortc/aiortc/tree/main/examples/server)
+
 NOTES:
 - got it to work as long as we forced chrome to accept the http address
-TODO: figure out how to use with flask, and with https?
-Put in our own transform.
 Found playing cards here:
 http://acbl.mybigcommerce.com/52-playing-cards/
 """
@@ -31,39 +32,25 @@ pcs = set()
 relay = MediaRelay()
 
 # added stuff:  
-#from fastai.vision.all import open_image
 from fastai import *
 from fastai.vision.all import *
-#from fastai.basic_train.all import load_learner
-#learn = Learner()
-
-#learn = load_learner('./models/kaggle1.pkl')
-
-filter = Filter() # create a filter, and load the learner.
+filter = Filter() # create a filter instance, and load the learner.
 
 class VideoTransformTrack(MediaStreamTrack):
     """
     A video stream track that transforms frames from an another track.
     """
-    #timeStep = 0
-
     kind = "video"
 
     def __init__(self, track, transform):
         super().__init__()  # don't forget this!
         self.track = track
-        self.transform = transform
+        self.transform = "pup"#transform # change to always be pup
         self.timeStep = 0 # added
-        # positions of card filter
-        #self.x_1 = 0; self.x_2 = 0; self.x_3 = 0; self.x_4 = 0
-        #self.y_1 = 0; self.y_2 = 0; self.y_3 = 0; self.y_4 = 0
 
     async def recv(self):
         frame = await self.track.recv()
-        #print("timestep is", self.timeStep)
-        # if self.timeStep % 10 != 0:
-        #     return frame
-        #print("doing detection")
+        
         if self.transform == "cartoon":
             img = frame.to_ndarray(format="bgr24")
 
@@ -96,9 +83,7 @@ class VideoTransformTrack(MediaStreamTrack):
         elif self.transform == "edges":
             # perform edge detection
             img = frame.to_ndarray(format="bgr24")
-            #img = 
             img = cv2.cvtColor(cv2.Canny(img, 100, 200), cv2.COLOR_GRAY2BGR)
-            #print("edge detection");
             # rebuild a VideoFrame, preserving timing information
             new_frame = VideoFrame.from_ndarray(img, format="bgr24")
             new_frame.pts = frame.pts
@@ -118,14 +103,7 @@ class VideoTransformTrack(MediaStreamTrack):
             return new_frame
         elif self.transform == "pup": # added
 
-            img = frame.to_ndarray(format="rgb24")
-
-            # Only recalculate filter position every 20 time steps.
-        #     if self.timeStep % 20 == 0:
-        # #     return frame
-        #         self.x_1, self.x_2, self.x_3, self.x_4, self.y_1, self.y_2, self.y_3, self.y_4 = filter.applyFilter(img)#, learn) # starting from upper left, and going counter clockwise: 1, 2, 3, 4
-            
-        #     img[self.y_1:self.y_3, self.x_1:self.x_3, :] = 0
+            img = frame.to_ndarray(format="rgb24")       
             img = filter.applyFilter(img, self.timeStep)
             # rebuild a VideoFrame, preserving timing information
             new_frame = VideoFrame.from_ndarray(img, format="rgb24")
