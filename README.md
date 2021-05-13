@@ -2,6 +2,13 @@
 
 The idea of this project is to create a filter of a playing card on people's foreheads. The filter will tilt when the person's head is tilted, and be centered on their forehead, with the bottom of the card located at the top of their eyebrows. Eventually, I'd like to include this filter in a video-calling app that allows myself and my friends to virtually play a game called "push-up poker", where we put cards on our foreheads and bet pushups on who has the highest card.
 
+The "training" folder contains "FacialFeatures.ipynb", which is the notebook file used for training the neural network used for finding facial features. To train the neural network, I used the [Facial Keypoints Detection](https://www.kaggle.com/c/facial-keypoints-detection/data) dataset from Kaggle. 
+It also contains "sorting.py" and "valid.py", which I wrote for data cleaning. "is_valid.py" is the result of running the aforementioned two scripts on the Kaggle dataset, and contains a 1 for every row in csv that was part of my validation dataset, and a 0 elsewhere.
+
+filter.py contains code that uses the neural network to apply the card filter to the incoming video feed.
+
+index.html, server.py, and client.js were all adapted from the [aiortc server example](https://github.com/aiortc/aiortc/tree/main/examples/server), and use the [aiortc library](https://aiortc.readthedocs.io/en/latest/api.html) to take in incoming video frames from the client, process them, and then return the processed video frames.
+
 
 ## Running the Code
 
@@ -27,8 +34,6 @@ Navigate to the following link using your favorite browser. You may need to expl
 
 Click Start, and you'll see the filter!
 
-
-## Files
 
 
 ## Credits
