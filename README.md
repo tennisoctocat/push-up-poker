@@ -6,7 +6,7 @@ The code was adapted from the [aiortc server example](https://github.com/aiortc/
 
 ## Running the Code
 
-Create a python virtual environment using `$ python3 -m venv /path/to/env_name`.
+Create a python virtual environment using ```$ python3 -m venv /path/to/env_name```
 Run your python virtual environment using `$ source /path/to/env_name/bin/activate`.
 Install only the required packages (and the required versions of the required packages) using `$ pip install -r requirements.txt`.
 Run the code using `$ python server.py`.
