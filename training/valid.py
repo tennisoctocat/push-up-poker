@@ -1,10 +1,10 @@
 """
-lab7valid.py
+valid.py
 
 Author: Cynthia Hom
 Date: Spring 2021
 
-Another script, lab7sorting.py, opens up the csv and makes a
+Another script, sorting.py, opens up the csv and makes a
 bunch of images in the images folder,
 one for each row of the csv. The images' names are "x.jpg", where
 x is the index of the row in the dataframe.
@@ -13,7 +13,7 @@ After running this script on the Kaggle csv, I manually picked out
 5 specific people to use as the validation dataset by dragging and 
 dropping their image files into a single validation folder. 
 
-I then ran this file, lab7valid.py to create a csv file that contained a 1 for every
+I then ran this file, valid.py to create a csv file that contained a 1 for every
 row in the csv that was a validaiton image (i.e. one of the images in the 
 validation folder) and a 0 otherwise.
 
