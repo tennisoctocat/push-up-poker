@@ -1,6 +1,6 @@
 # Push-Up Poker
 
-This code applies a filter of a playing card on people's foreheads in real time to a live incoming video feed. The filter tilts when the person's head is tilted, and is centered on their forehead, with the bottom of the card located at the top of their eyebrows. Eventually, I'd like to include this filter in a video-calling app that allows myself and my friends to virtually play a game called "push-up poker", where we put cards on our foreheads and bet pushups on who has the highest card.
+This code applies a filter of a playing card on people's foreheads in real time to a live incoming video feed. The filter tilts when the person's head is tilted, and is centered on their forehead, with the bottom of the card located at the top of their eyebrows. Eventually, I'd like to include this filter in a video-calling app that allows me and my friends to virtually play a game called "push-up poker", where we put cards on our foreheads and bet pushups on who has the highest card.
 
 
 ## Running the Code
