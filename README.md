@@ -7,19 +7,19 @@ This code applies a filter of a playing card on people's foreheads in real time 
 
 Create a python virtual environment.
 ```
-$ python3 -m venv env_name
+python3 -m venv env_name
 ```
 Activate your python virtual environment.
 ```
-$ source env_name/bin/activate
+source env_name/bin/activate
 ```
 Install the required packages.
 ```
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 Run the code.
 ```
-$ python server.py
+python server.py
 ```
 Navigate to the following link using your favorite browser. You may need to explicitly tell your browser that this is a safe url if it complains.
 
