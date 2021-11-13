@@ -19,7 +19,7 @@ pip install -r requirements.txt
 ```
 Run the code.
 ```
-python server.py
+python3 server.py
 ```
 Navigate to the following link using your favorite browser. You may need to explicitly tell your browser that this is a safe url if it complains.
 
