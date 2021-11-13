@@ -15,7 +15,7 @@ source env_name/bin/activate
 ```
 Install the required packages.
 ```
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 Run the code.
 ```
